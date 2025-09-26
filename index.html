@@ -1,76 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Anushka Game | Portfolio</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calculator</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #f4f4f9;
+      font-family: Arial, sans-serif;
+    }
+
+    .calculator {
+      background: #2196f3;
+      padding: 22px;
+      border-radius: 18px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+      user-select: none;
+    }
+
+    .display {
+      width: 100%;
+      height: 58px;
+      margin-bottom: 14px;
+      text-align: right;
+      font-size: 28px;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 10px;
+      background: #e3f2fd;
+      color: #0b2340;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 72px);
+      gap: 10px;
+      justify-content: center;
+    }
+
+    button {
+      height: 64px;
+      font-size: 20px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background: #64b5f6;
+      color: white;
+      font-weight: bold;
+      transition: transform .08s ease, background .12s;
+    }
+
+    button:active { transform: translateY(2px); }
+    button:hover { filter: brightness(.95); }
+
+    .equal { background: #43a047; }
+    .equal:hover { filter: brightness(.9); }
+
+    .clear { background: #e53935; }
+    .clear:hover { filter: brightness(.9); }
+
+    /* make 0 span two columns */
+    .zero { grid-column: span 2; }
+
+    /* operator style */
+    .op { background: #1976d2; }
+  </style>
 </head>
 <body>
-<nav>
-  <div class="logo-container">
-    <img src="Anu logo.png" alt="Logo" class="logo">
-    <span class="site-name">Anushka Game</span>
+
+  <div class="calculator">
+    <input id="display" class="display" type="text" value="0" readonly>
+
+    <div class="buttons">
+      <button class="clear" onclick="clearDisplay()">C</button>
+      <button onclick="appendValue('/')">÷</button>
+      <button onclick="appendValue('*')">×</button>
+      <button onclick="appendValue('-')">−</button>
+
+      <button onclick="appendValue('7')">7</button>
+      <button onclick="appendValue('8')">8</button>
+      <button onclick="appendValue('9')">9</button>
+      <button class="op" onclick="appendValue('+')">+</button>
+
+      <button onclick="appendValue('4')">4</button>
+      <button onclick="appendValue('5')">5</button>
+      <button onclick="appendValue('6')">6</button>
+      <button class="equal" onclick="calculate()">=</button>
+
+      <button onclick="appendValue('1')">1</button>
+      <button onclick="appendValue('2')">2</button>
+      <button onclick="appendValue('3')">3</button>
+      <button class="zero" onclick="appendValue('0')">0</button>
+
+      <button onclick="appendValue('.')">.</button>
+    </div>
   </div>
-  <ul>
-    <li><a href="#home">Home</a></li>
-    <li><a href="#about">About Me</a></li>
-    <li><a href="#skills">Skills</a></li>
-    <li><a href="#projects">Projects</a></li>
-    <li><a href="#resume">Resume</a></li>
-    <li><a href="#contact">Contact</a></li>
-  </ul>
-</nav>
-  <section id="home" class="hero">
-    <div class="hero-text">
-      <h1>ANUSHKA GAME</h1>
-      <p>Hi, I am an IT Engineer and Web Developer.</p>
-      <a href="#contact" class="btn">Hire Me</a>
-    </div>
-    <div class="hero-img">
-      <img src="My Photo.jpg" alt="Anushka">
-    </div>
-  </section>
-  <section id="about">
-    <h2>About Me</h2>
-    <p>
-      I am an IT Engineer passionate about web development, AI and digital marketing. 
-      I enjoy creating projects that solve real-world problems and improve user experience.
-    </p>
-    <section id="resume">
-    <a href="resume.pdf" download class="btn">Download Resume</a>
-    </section>
-  </section>
-  <section id="skills">
-    <h2>My Skills</h2>
-    <div class="skills-container">
-      <div class="skill">HTML & CSS</div>
-      <div class="skill">JavaScript</div>
-      <div class="skill">Python</div>
-      <div class="skill">Flask</div>
-      <div class="skill">MYSQL</div>
-    </div>
-  </section>
-  <section id="projects">
-    <h2>Projects</h2>
-    <div class="project">
-      <img src="project1.png" alt="Project 1">
-      <h3>Online Bus Reservation System</h3>
-      <p>A full web app for bus ticket booking with seat selection, QR payments and admin panel.</p>
-    </div>
-    <div class="project">
-      <img src="project2.jpg" alt="Project 2">
-      <h3>F&K Company Website</h3>
-      <p>A responsive website designed for F&K Company with modern UI/UX.</p>
-    </div>
-  </section>
-  <section id="contact">
-    <h2>Contact Me</h2>
-    <p>Email: <a href="mailto:gameanushka2005@gmail.com">gameanushka2005@gmail.com</a></p>
-    <p>Phone: +91-8010156977</p>
-  </section>
-  <footer>
-    <p>© 2025 Anushka Game | All Rights Reserved</p>
-  </footer>
+
+<script>
+  const display = document.getElementById('display');
+
+  function isOperator(ch) {
+    return ['+', '-', '*', '/'].includes(ch);
+  }
+  function getLastChar() {
+    return display.value.slice(-1);
+  }
+
+  function appendValue(val) {
+    let cur = display.value.trim();
+    if (cur === "0" && /[0-9]/.test(val)) {
+      display.value = val;
+      return;
+    }
+    if (isOperator(getLastChar()) && isOperator(val)) {
+      display.value = cur.slice(0, -1) + val;
+      return;
+    }
+    if (val === '.') {
+      let parts = cur.split(/[\+\-\*\/]/);
+      let lastNum = parts[parts.length - 1];
+      if (lastNum.includes('.')) return;
+      if (lastNum === '') {
+        display.value = cur + '0.';
+        return;
+      }
+    }
+    display.value = cur + val;
+  }
+
+  function clearDisplay() {
+    display.value = '0';
+  }
+
+  function calculate() {
+    let expr = display.value.trim();
+    while (expr.length > 0 && isOperator(expr.slice(-1))) {
+      expr = expr.slice(0, -1);
+    }
+    if (expr === '') {
+      display.value = '0';
+      return;
+    }
+    try {
+      if (!/^[0-9+\-*/().\s]+$/.test(expr)) throw new Error('Invalid characters');
+      const result = Function('"use strict"; return (' + expr + ')')();
+      display.value = Number.isFinite(result) ? parseFloat(result.toPrecision(12)).toString() : '0';
+    } catch (e) {
+      alert('Invalid expression');
+      display.value = '0';
+    }
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); calculate(); }
+    if (e.key === 'Backspace') {
+      e.preventDefault();
+      let cur = display.value;
+      if (cur.length <= 1) display.value = '0';
+      else display.value = cur.slice(0, -1);
+    }
+  });
+</script>
+
 </body>
 </html>
